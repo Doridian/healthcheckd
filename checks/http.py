@@ -2,7 +2,7 @@ from .base import BaseCheck
 
 class HTTPCheck(BaseCheck):
     def __init__(self, config):
-        super().__init__(self, config)
+        super().__init__(config)
 
         self.port = config.getint('port', 80)
         self.host = config.get('host', '127.0.0.1')

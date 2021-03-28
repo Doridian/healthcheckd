@@ -1,5 +1,6 @@
-from datetime import datetime, time, timedelta
+from datetime import datetime, timedelta
 from func_timeout import func_timeout
+from threading import Event
 
 class CheckState():
     def __init__(self, machine):
@@ -88,6 +89,8 @@ class BaseCheck():
         
         self.next_check = datetime.now()
         self.state = CheckStateDown(self)
+        self.should_run_loop = False
+        self.thread_wait_e = None
         
     def print(self, line):
         print('[%s] %s' % (self.name, line))
@@ -98,6 +101,7 @@ class BaseCheck():
         self.print("Going from %s to %s" % (old_state.get_name(), self.state.get_name()))
 
     def run(self):
+        self.print("Check...")
         res = False
         try:
             res = func_timeout(func=self.check, timeout=self.check_timeout)
@@ -113,9 +117,26 @@ class BaseCheck():
             self.print('%s [%i/%i]' % (self.state.get_name(), self.state.consecutive, self.state.limit))
 
         interval = self.interval_regular
-        if not isinstance(self.state, CheckStateUp):
+        if not self.is_up():
             interval = self.interval_fast
         self.next_check = datetime.now() + timedelta(milliseconds=interval * 1000.0)
+        return interval
+
+    def run_loop(self):
+        self.should_run_loop = True
+        while self.should_run_loop:
+            interval = self.run()
+            self.thread_wait_e = Event()
+            self.thread_wait_e.wait(timeout=interval)
+
+    def stop_loop(self):
+        self.should_run_loop = False
+        if self.thread_wait_e:
+            self.thread_wait_e.set()
+            self.thread_wait_e = None
+
+    def is_up(self):
+        return isinstance(self.state, CheckStateUp)
 
     def check(self):
         return False
