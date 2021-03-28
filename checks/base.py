@@ -21,7 +21,7 @@ class CheckState():
 class CheckLimitState(CheckState):
     def __init__(self, machine, limit, limit_target):
         super().__init__(machine)
-        self.consecutive = 0
+        self.consecutive = 1
         self.limit = limit
         self.limit_target = limit_target
 
@@ -52,7 +52,7 @@ class CheckStateDown(CheckState):
 
 class CheckStateGoingUp(CheckLimitState):
     def __init__(self, machine):
-        super().__init__(machine.up_checks, CheckStateUp)
+        super().__init__(machine, machine.up_checks, CheckStateUp)
 
     def get_name(self):
         return 'GOING_UP'
@@ -65,7 +65,7 @@ class CheckStateGoingUp(CheckLimitState):
 
 class CheckStateGoingDown(CheckLimitState):
     def __init__(self, machine):
-        super().__init__(machine.down_checks, CheckStateDown)
+        super().__init__(machine, machine.down_checks, CheckStateDown)
 
     def get_name(self):
         return 'GOING_DOWN'
@@ -101,7 +101,6 @@ class BaseCheck():
         self.print("Going from %s to %s" % (old_state.get_name(), self.state.get_name()))
 
     def run(self):
-        self.print("Check...")
         res = False
         try:
             res = func_timeout(func=self.check, timeout=self.check_timeout)
