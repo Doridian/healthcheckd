@@ -28,6 +28,9 @@ def stop_all_v():
     print('Stopping checker...')
     stop_all()
 
+def stop_all_sigh(_a, _b):
+    stop_all_v()
+
 def stop_all():
     global threads
     for check in checks:
@@ -45,5 +48,5 @@ except KeyboardInterrupt:
     print('Ctrl-C caught')
     stop_all_v()
 
-signal(SIGINT, stop_all_v)
-signal(SIGTERM, stop_all_v)
+signal(SIGINT, stop_all_sigh)
+signal(SIGTERM, stop_all_sigh)
