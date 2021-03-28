@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 from func_timeout import func_timeout
 
 class CheckState():
@@ -80,8 +80,9 @@ class BaseCheck():
         self.name = config.get('name', 'Unnamed check')
 
         # Fast is used when the service is down, going down or going up
-        self.interval_regular = config.getfloat('interval_regular', 5) * 1000
-        self.interval_fast = config.getfloat('interval_fast', self.interval_regular / 2) * 1000
+        self.interval_regular = config.getfloat('interval_regular', 5)
+        self.interval_fast = config.getfloat('interval_fast', self.interval_regular / 2)
+        self.check_timeout = config.getfloat('check_timeout', self.interval_fast)
         self.up_checks = config.getint('up_checks', 5)
         self.down_checks = config.getint('down_checks', 3)
         
@@ -99,7 +100,7 @@ class BaseCheck():
     def run(self):
         res = False
         try:
-            res = func_timeout(func=self.check)
+            res = func_timeout(func=self.check, timeout=self.check_timeout)
         except:
             pass
 
@@ -114,7 +115,7 @@ class BaseCheck():
         interval = self.interval_regular
         if not isinstance(self.state, CheckStateUp):
             interval = self.interval_fast
-        self.next_check = datetime.now() + timedelta(milliseconds=interval)
+        self.next_check = datetime.now() + timedelta(milliseconds=interval * 1000.0)
 
     def check(self):
         return False
