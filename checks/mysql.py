@@ -33,4 +33,5 @@ class MySQLCheck(BaseCheck):
         cur = conn.cursor()
         cur.execute(self.query)
         res = cur.fetchone()
-        return str(res) == self.expect
+        conn.close()
+        return res and str(res[0]) == self.expect

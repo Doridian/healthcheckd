@@ -104,8 +104,8 @@ class BaseCheck():
         res = False
         try:
             res = func_timeout(func=self.check, timeout=self.check_timeout)
-        except:
-            pass
+        except Exception as e:
+            self.print('Failed with exception: %s' % e)
 
         if res:
             self.state.on_up()
