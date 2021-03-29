@@ -1,7 +1,7 @@
 
-from .http import start_server, stop_server
+from server import start_server, stop_server
+from checker import start_all, stop_all
 from signal import signal, SIGINT, SIGTERM
-from .checker import start_all, stop_all
 
 def stop_all_v():
     print('Stopping checker...')
@@ -13,7 +13,7 @@ def stop_all_sigh(_a, _b):
 
 start_all()
 
-start_server()
+start_server(2080)
 stop_all_v()
 
 signal(SIGINT, stop_all_sigh)

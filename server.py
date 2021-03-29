@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from .checker import is_all_up
+from checker import is_all_up
 
 server = None
 
