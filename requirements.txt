@@ -1,2 +1,3 @@
 requests
 func_timeout
+mysql-connector-python
