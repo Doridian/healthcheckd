@@ -3,9 +3,16 @@ from configparser import ConfigParser
 from threading import Thread
 from time import sleep
 from signal import signal, SIGINT, SIGTERM
+from os import listdir
+from os.path import join
 
 parser = ConfigParser()
-parser.read('config.ini')
+
+config_dir = 'config'
+for f in listdir(config_dir):
+    if f[0] != '.':
+        print('Reading config file %s' % f)
+        parser.read(join(config_dir, f))
 
 checks = []
 
