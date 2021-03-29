@@ -137,9 +137,6 @@ class BaseCheck():
     def is_up(self):
         return isinstance(self.state, CheckStateUp)
 
-    def check(self):
-        return False
-
     def should_check(self, at=None):
         if at == None:
             at = datetime.now()
