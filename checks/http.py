@@ -6,6 +6,7 @@ class HTTPCheck(BaseCheck):
         super().__init__(config)
 
         self.url = config.get('url', 'http://127.0.0.1/')
+        self.host_override = config.get('host_override', '')
         method_str = config.get('method', 'GET').upper()
         if method_str == 'GET':
             self.method = get
@@ -17,5 +18,8 @@ class HTTPCheck(BaseCheck):
         self.status_codes = map(int, config.get('statusCodes', '200,201,202,204').split(','))
 
     def check(self):
-        res = self.method(self.url)
+        headers = {}
+        if self.host_override != '':
+            headers['host'] = self.host_override
+        res = self.method(self.url, headers=headers)
         return res.status_code in self.status_codes
