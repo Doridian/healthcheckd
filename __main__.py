@@ -5,6 +5,7 @@ from time import sleep
 from signal import signal, SIGINT, SIGTERM
 from os import listdir
 from os.path import join
+from .http import start_server, stop_server
 
 parser = ConfigParser()
 
@@ -23,6 +24,12 @@ for section_name in parser.sections():
 
 threads = []
 
+def is_all_up():
+    for check in checks:
+        if not check.is_up():
+            return False
+    return True
+
 def start_all():
     global threads
     stop_all()
@@ -36,6 +43,7 @@ def stop_all_v():
     stop_all()
 
 def stop_all_sigh(_a, _b):
+    stop_server()
     stop_all_v()
 
 def stop_all():
@@ -48,12 +56,8 @@ def stop_all():
 
 start_all()
 
-try:
-    while True:
-        sleep(1)
-except KeyboardInterrupt:
-    print('Ctrl-C caught')
-    stop_all_v()
+start_server()
+stop_all_v()
 
 signal(SIGINT, stop_all_sigh)
 signal(SIGTERM, stop_all_sigh)
