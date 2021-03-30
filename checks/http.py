@@ -15,7 +15,7 @@ class HTTPCheck(BaseCheck):
         else:
             raise ValueError('Invalid method. Supports GET and HEAD')
 
-        self.status_codes = map(int, config.get('statusCodes', '200,201,202,204').split(','))
+        self.status_codes = set(map(int, config.get('statusCodes', '200,201,202,204').split(',')))
 
     def check(self):
         headers = {}
