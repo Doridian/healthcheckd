@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from func_timeout import func_timeout
 from threading import Event
+from sys import stderr
 
 class CheckState():
     def __init__(self, machine):
@@ -93,7 +94,8 @@ class BaseCheck():
         self.thread_wait_e = None
         
     def print(self, line):
-        print('[%s] %s' % (self.name, line))
+        stderr.write('[%s] %s\n' % (self.name, line))
+        stderr.flush()
 
     def set_state(self, StateCls):
         old_state = self.state
