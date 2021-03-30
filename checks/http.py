@@ -15,11 +15,11 @@ class HTTPCheck(BaseCheck):
         else:
             raise ValueError('Invalid method. Supports GET and HEAD')
 
-        self.status_codes = map(int, config.get('statusCodes', '200,201,202,204').split(','))
+        self.status_codes = config.get('statusCodes', '200,201,202,204').split(',')
 
     def check(self):
         headers = {}
         if self.host_override != '':
             headers['host'] = self.host_override
         res = self.method(self.url, headers=headers)
-        return res.status_code in self.status_codes
+        return str(res.status_code) in self.status_codes
