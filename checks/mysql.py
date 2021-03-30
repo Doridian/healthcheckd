@@ -4,7 +4,7 @@ from mysql import connector
 presets = {
     'wsrep': {
         'query': 'SHOW STATUS WHERE variable_name = "wsrep_ready"',
-        'expect': 'ON',
+        'expect': '(\'wsrep_ready\', \'ON\')',
     },
     'simple': {
         'query': 'SELECT 1+1',
@@ -34,4 +34,8 @@ class MySQLCheck(BaseCheck):
         cur.execute(self.query)
         res = cur.fetchone()
         conn.close()
-        return res and str(res[0]) == self.expect
+        if not res:
+            return False
+        if len(res) == 1:
+            res = res[0]
+        return str(res) == self.expect
