@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from func_timeout import func_timeout
+from func_timeout.exceptions import FunctionTimedOut
 from threading import Event
 from sys import stderr
 
@@ -106,6 +107,8 @@ class BaseCheck():
         res = False
         try:
             res = func_timeout(func=self.check, timeout=self.check_timeout)
+        except FunctionTimedOut:
+            self.print('Check timed out')
         except Exception as e:
             self.print('Failed with exception: %s' % e)
 
