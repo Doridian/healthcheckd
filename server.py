@@ -8,11 +8,11 @@ class Server(BaseHTTPRequestHandler):
         if is_all_up():
             self.send_response(200)
             self.end_headers()
-            self.wfile.write('OK')
+            self.wfile.write(b'OK')
         else:
             self.send_response(500)
             self.end_headers()
-            self.wfile.write('FAIL')
+            self.wfile.write(b'FAIL')
 
 def start_server(port):
     global server
